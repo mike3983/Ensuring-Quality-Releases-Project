@@ -127,7 +127,7 @@ stages:
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/TEST-*.xml'
-        searchFolder:    # ToDo
+        testResultsFiles: '**/*.xml'
+    #   searchFolder:    
         mergeTestResults: true
-        testRunTitle: 'Publish postman test result'  # ToDo
+        testRunTitle: 'Publish postman test result'

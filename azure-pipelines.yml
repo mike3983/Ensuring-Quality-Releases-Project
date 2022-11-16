@@ -112,7 +112,7 @@ stages:
       displayName: Run Data Validation Tests
       continueOnError: true
       inputs:
-        script: newman run DV_suite.json -e Testing.postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-data-validation.xml   # ToDo: Write your commands
+        script: newman run DV_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-data-validation.xml   # ToDo: Write your commands
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'    
     # Postman Regression Test Suite    
     # ToDo: Update the command and verify the working directory

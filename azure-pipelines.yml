@@ -1,19 +1,36 @@
-# Starter pipeline
+name: Azure Pipelines
+
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
-
 trigger:
-- master
+- main
 
-pool:
-  vmImage: ubuntu-latest
+# ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
+# Otherwise, comment out the line below. 
+# pool: myAgentPool
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  python.version: '3.7.6'
+  # ToDo: Replace the service connection name as used in the DevOps project settings
+  azureServiceConnectionId: '02f5d520-bcee-4ad1-b00f-2532e8ff96b6'
+  # Project root folder. Point to the folder containing manage.py file.
+  projectRoot: $(System.DefaultWorkingDirectory)
+  # Environment name
+  environmentName: 'test'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+#--------------------------------------------#  
+# BUILD STAGE
+#--------------------------------------------#    
+- stage: Build
+  jobs:
+  - job: BuildInfrastructure
+    steps:
+    #--------------------------------------------#  
+    # Use Terraform to create the Infrastructure      
+    # Install Terraform on the pipeline agent 
+    - task: TerraformInstaller@0
+      displayName: 'Terrafom installation'
+      inputs:
+        terraformVersion: '1.2.9'

@@ -198,7 +198,7 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               ConnectionType: AzureRM
-              azureSubscription: testEnv      # ToDo
+              azureSubscription: testenv      # ToDo
               appType: webAppLinux
               WebAppName: myFakeWebapp
               packageForLinux: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip     # ToDo: Use the published zip artifact. 

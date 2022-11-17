@@ -177,3 +177,36 @@ stages:
     - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-performancetestsuite.zip'
       displayName: 'Upload Jmeter Performance Test Suite'
       artifact: drop-performancetestsuite        
+
+#--------------------------------------------#  
+# DEPLOYMENT STAGE
+#--------------------------------------------#    
+- stage: Deploy
+  jobs:
+  #--------------------------------------------#  
+  # Deploy FakeRestAPI Web App
+  # ToDo: Provide <environment name> you created in your DevOps project
+  - deployment: FakeRestAPI
+    pool:        
+      vmImage: 'Ubuntu-latest'      
+    environment: project3   # ToDo
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure Web App'
+            inputs:
+              azureSubscription: 2576e2a1-0b1e-4545-9622-12ca44208419      # ToDo
+              appName: myFakeApp
+              appType: webApp
+              package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip     # ToDo: Use the published zip artifact. 
+          #--------------------------------------------#    
+          # Run JMeter test suite against the App Service
+          # ToDo: Update the script below to install jmeter, unzip the jmeter test suite published zip artifact, and run the PerformanceTestSuite.  
+          # ToDo: Generate the log file. 
+          #- task: CmdLine@2
+          #  inputs:
+          #    script: |
+          #                                                                  # ToDo: Write your commands
+          #    workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above

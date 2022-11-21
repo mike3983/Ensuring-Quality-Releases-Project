@@ -198,7 +198,7 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               azureSubscription: testenv
-              WebAppName: 'myFakeWebApp2'
+              WebAppName: myFakeWebApp2
               packageForLinux: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
               enableCustomDeployment: true
               DeploymentType: zipDeploy

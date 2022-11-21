@@ -189,7 +189,7 @@ stages:
   - deployment: FakeRestAPI
     pool:        
       vmImage: 'Ubuntu-latest'      
-    environment: project3   # ToDo
+    environment: project3
     strategy:
       runOnce:
         deploy:
@@ -198,8 +198,8 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               azureSubscription: testenv
-              WebAppName: 'myFakeWebapp'
-              packageForLinux: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip     # ToDo: Use the published zip artifact.
+              WebAppName: 'myFakeWebApp2'
+              packageForLinux: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
               enableCustomDeployment: true
               DeploymentType: zipDeploy
               TakeAppOfflineFlag: false

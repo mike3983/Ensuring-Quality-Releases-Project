@@ -197,11 +197,12 @@ stages:
           - task: AzureRmWebAppDeployment@4
             displayName: 'Deploy Azure Web App'
             inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: 'testenv'      # ToDo
-              appType: 'webAppLinux'
+              azureSubscription: testenv
               WebAppName: 'myFakeWebapp'
-              packageForLinux: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip     # ToDo: Use the published zip artifact. 
+              packageForLinux: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip     # ToDo: Use the published zip artifact.
+              enableCustomDeployment: true
+              DeploymentType: zipDeploy
+              TakeAppOfflineFlag: false
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           # ToDo: Update the script below to install jmeter, unzip the jmeter test suite published zip artifact, and run the PerformanceTestSuite.  

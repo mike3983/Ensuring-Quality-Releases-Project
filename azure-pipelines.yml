@@ -198,6 +198,7 @@ stages:
             displayName: Deploy Azure WebApp
             inputs:
               azureSubscription: 'testenv'
+              ResourceGroupName: 'appsvc_windows_centralus'
               appName: 'myFakeWebApp2'
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/fakerestapi-$(Build.BuildId).zip

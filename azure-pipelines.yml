@@ -213,9 +213,9 @@ stages:
   jobs:
   - job: JMeterTests
     displayName: JMeter Tests
-    pool:
-      name: Azure Pipelines
-      vmImage: vmImageName
+    # pool:
+    #  name: Azure Pipelines
+    #  vmImage: 'Ubuntu-latest'
     steps:
       - task: Bash@3
         displayName: Install JMeter

@@ -186,23 +186,23 @@ stages:
   #--------------------------------------------#  
   # Deploy FakeRestAPI Web App
   # ToDo: Provide <environment name> you created in your DevOps project
-  - deployment: FakeRestAPI
-    pool:        
-      vmImage: 'Ubuntu-latest'      
-    environment: project3
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureWebApp@1
-            displayName: Deploy Azure WebApp
-            inputs:
-              azureSubscription: 'testenv'
+  #- deployment: FakeRestAPI
+  # pool:        
+  #    vmImage: 'Ubuntu-latest'      
+  #  environment: project3
+  #  strategy:
+  #    runOnce:
+  #      deploy:
+  #        steps:
+  #        - task: AzureWebApp@1
+  #          displayName: Deploy Azure WebApp
+  #          inputs:
+  #            azureSubscription: 'testenv'
               #ResourceGroupName: 'appsvc_windows_centralus'
-              appName: 'myFakeWebApp2'
-              appType: webApp
-              package: $(Pipeline.Workspace)/drop-fakerestapi/fakerestapi-$(Build.BuildId).zip
-              deploymentMethod: zipDeploy
+  #           appName: 'myFakeWebApp2'
+  #            appType: webApp
+  #            package: $(Pipeline.Workspace)/drop-fakerestapi/fakerestapi-$(Build.BuildId).zip
+  #            deploymentMethod: zipDeploy
           #--------------------------------------------#    
           # Run JMeter test suite against the App Service
           # ToDo: Update the script below to install jmeter, unzip the jmeter test suite published zip artifact, and run the PerformanceTestSuite.  

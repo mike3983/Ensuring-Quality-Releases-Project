@@ -234,4 +234,10 @@ stages:
             -l automatedtesting/jmeter/starterresultsresults.csv \
             -e -f -o automatedtesting/jmeter/starter-test-report.html \
             -j automatedtesting/jmeter/starter-test.log
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '**/*.xml'
+          # testRunTitle: 'Publish test results'
+          # searchFolder: '**/TestResults'
 

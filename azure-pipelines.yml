@@ -214,7 +214,7 @@ stages:
   - job: JMeterTests
     displayName: JMeter Tests
     pool:
-      name: myAgentPool
+      name: Azure Pipelines
       vmImage: vmImageName
     steps:
       - task: Bash@3

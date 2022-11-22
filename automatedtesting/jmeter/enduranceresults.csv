@@ -1,0 +1,11 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1669081655785,211,HTTP Request,200,OK,Endurance Test 1-1,text,true,,63833,147,3,3,https://myfakewebapp2.azurewebsites.net/api/Authors,174,0,132
+1669081655889,120,HTTP Request,200,OK,Endurance Test 1-2,text,true,,47941,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,102,0,70
+1669081655987,122,HTTP Request,200,OK,Endurance Test 1-3,text,true,,47941,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,104,0,70
+1669081656089,130,HTTP Request,200,OK,Endurance Test 1-4,text,true,,47941,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,112,0,74
+1669081656188,131,HTTP Request,200,OK,Endurance Test 1-5,text,true,,32049,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,111,0,75
+1669081656288,142,HTTP Request,200,OK,Endurance Test 1-6,text,true,,47941,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,118,0,78
+1669081656389,133,HTTP Request,200,OK,Endurance Test 1-7,text,true,,32049,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,114,0,75
+1669081656488,130,HTTP Request,200,OK,Endurance Test 1-8,text,true,,32049,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,112,0,71
+1669081656588,132,HTTP Request,200,OK,Endurance Test 1-9,text,true,,32049,147,2,2,https://myfakewebapp2.azurewebsites.net/api/Authors,111,0,75
+1669081656687,181,HTTP Request,200,OK,Endurance Test 1-10,text,true,,63833,147,1,1,https://myfakewebapp2.azurewebsites.net/api/Authors,142,0,103

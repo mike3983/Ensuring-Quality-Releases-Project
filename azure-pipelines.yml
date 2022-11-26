@@ -268,12 +268,11 @@ stages:
             artifactName: 'drop-endurance-test-logs'
             
 
-#--------------------------------------------#  
+  #--------------------------------------------#  
   # Selenium | Functional UI Tests
-- stage: Test
-  jobs:
-  - deployment: test_vm
-    displayName: Test on Virtual Machine
+  # ToDo: 
+  - deployment: VMDeploy
+    displayName: Selenium Tests
     environment:
       name: project3
       resourceType: VirtualMachine
@@ -281,24 +280,41 @@ stages:
       runOnce:
         deploy:
           steps:
-          - bash: |
-              cd $(Pipeline.Workspace)/drop-selenium
-              find . -type f ! -name 'selenium-$(Build.BuildId).zip' -delete  # delete everything except 'selenium-$(Build.BuildId).zip'
-              unzip -o selenium-$(Build.BuildId).zip
-              pwd
-              ls -la
-              sudo mkdir -p /var/log/selenium
-              sudo chmod 664 /var/log/selenium
-              sudo python3 -u login.py 2>&1 | sudo tee -a /var/log/selenium/selenium-test.log
-              # copy selenium log file to $(System.DefaultWorkingDirectory)/log/selenium/
-              cd $(System.DefaultWorkingDirectory)
-              mkdir -p log/selenium
-              pwd
-              sudo cp /var/log/selenium/selenium-test.log log/selenium/selenium-test.log
-              ls -la
-            displayName: Run selenium tests
-          - task: PublishPipelineArtifact@1
-            displayName: Publish selenium logs
+          - download: current
+            
+          - task: Bash@3
             inputs:
-              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test.log'
-              artifactName: 'drop-selenium-logs'
+              targetType: 'inline'
+              script: |           
+                # ToDo: Install Selenium, Chromium-browser & Chromedriver, if not already in the custom VM image. 
+                #! /bin/bash
+                sudo apt-get update -y
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
+                sudo apt-get install -y chromium-chromedriver
+                pip3 install selenium
+                
+                #  ToDo: Add chromedriver executable to path
+                #  export PATH=$PATH:/usr/lib/chromium-browser/     
+                
+                # ToDo: Write commands for deploying the UI Test Suite (published zip artifact) to the linux VM and execute the Test Suite
+                # ToDo: Direct the output of the Selenium Test Suite to a log file
+                
+          - task: Bash@3
+            displayName: Run UI test
+            inputs:
+              targetType: 'inline'
+              script: |
+                unzip -o $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip -d ./
+                mkdir -p ./log/selenium
+                python3 ./login.py 2>&1 | tee -a ./log/selenium/selenium-test-suite.log
+                sudo cp ./log/selenium/selenium-test-suite.log logs/selenium/selenium-test-suite.log
+                ls -al
+          - task: PublishPipelineArtifact@1
+            displayName: Selenium Logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test-suite.log'
+              artifact: drop-selenium-logs
+              publishLocation: 'pipeline'

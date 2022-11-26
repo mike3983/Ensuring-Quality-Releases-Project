@@ -261,64 +261,67 @@ stages:
             targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
             artifactName: 'drop-endurance-test-logs'
             
-- stage: SeleniumTests     
+- stage: TEST
+
   jobs:
-  - deployment: UITests
-    displayName: 'UI Tests'
-    pool:
-      vmImage: 'ubuntu-18.04'
-      name: myAgentPool
-    environment:  'project3'
+
+
+
+  - deployment: VMDeploy
+    displayName: 'QA for Website'
+    environment:
+      name: 'project3'
+      resourceType: VirtualMachine
     strategy:
       runOnce:
         deploy:
           steps:
-          # - download: current
-          #   displayName: Download selenium
-          #   artifact: selenium 
-          ####################################################################
-          #                       Selenium Test                              #
-          ####################################################################
+
+          - checkout: self
+
+
           - task: Bash@3
-            displayName: 'Install Selenium'
+            displayName: "Install Chromedriver on VM"
             inputs:
               targetType: 'inline'
               script: |
                 #! /bin/bash
-                
-                sudo apt-get update -y
+          
+                sudo apt-get upgrade -y
+                sudo apt-get install python$(python.version) -y
                 sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
                 sudo apt-get install -y chromium-browser
-                sudo apt-get install -y chromium-chromedriver
-                sudo python3 -m pip install --upgrade pip
-                sudo pip3 install selenium==3.141.0
-                selenium==3.141.0
-                sudo pip3 install 
-                export PATH=$PATH:/usr/lib/chromium-browser/
-                cd $(Pipeline.Workspace)/selenium
-                unzip -o $(Pipeline.Workspace)/selenium/$(Build.BuildId)-selenium-tests -d .
-          - bash: |
-              cd $(Pipeline.Workspace)/s/automatedtesting/selenium
-              rm -rf seleniumtestrun.log
-              pwd
-              python3 login.py
-              ls -lah
-              python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
-              sudo cat seleniumtestrun.log
-              sudo cp seleniumtestrun.log /var/log/selenium
-            displayName: Run Selenium Test-Suite
-          - task: PublishPipelineArtifact@1
-             displayName: Publish Selenium Result logs
-             inputs:
-               targetPath: '$(Pipeline.Workspace)/selenium/selenium-result.log'
-               artifactName: 'SeleniumTestResult'
+                pip3 install selenium
+                a=$(uname -m)
+                mkdir /tmp/chromedriver/
+                wget -O /tmp/chromedriver/LATEST_RELEASE https://chromedriver.storage.googleapis.com/LATEST_RELEASE
+                if [ $a == i686 ]; then b=32; elif [ $a == x86_64 ]; then b=64; fi 
+                latest=$(cat /tmp/chromedriver/LATEST_RELEASE)
+                wget -O /tmp/chromedriver/chromedriver.zip 'http://chromedriver.storage.googleapis.com/'$latest'/chromedriver_linux'$b'.zip' 
+                unzip -o /tmp/chromedriver/chromedriver.zip chromedriver -d /home/adminuser/chromedriver 
+                sudo chmod 0775 /home/adminuser/chromedriver
+
+
           - task: Bash@3
-             displayName: 'Run Selenium Tests'
-             inputs:
-               targetType: 'inline'
-               script: |
-                 # python3.7 /home/myagent/myagent/_work/1/selenium/login.py > /home/myagent/myagent/_work/1/selenium/seleniumtestrun.log
-                 sudo python3 /home/myagent/myagent/_work/1/selenium/login.py > seleniumtestrun.log
-                 sudo cp /home/myagent/myagent/_work/1/selenium/seleniumtestrun.log /var/log
-                 echo "copy log ---------------------------"
-                 sudo cat /var/log/seleniumtestrun.log
+            displayName: 'Run Selenium QA Tests'
+            inputs:
+              targetType: 'inline'
+              script: |
+                #! /bin/bash
+                export PATH=$PATH:/home/adminuser/chromedriver >> ~/.profile
+                echo $PATH
+                mkdir /home/adminuser/logs
+                touch /home/adminuser/logs/loginapp.log
+                sudo chmod a+rw /home/adminuser/logs/loginapp.log
+                mkdir /home/adminuser/scripts
+                sudo cp $(Build.SourcesDirectory)/login.py /home/adminuser/scripts
+                sudo chmod 0775 /home/adminuser/scripts/login.py
+                python3 /home/adminuser/scripts/login.py
+        on:
+          failure:
+            steps:
+            - script: echo 'Deployment of WebApp & Selenium QA Tests were not completed'
+          success:
+            steps:
+            - script: echo 'Deployment of WebApp & Selenium QA Tests completed successfully'

@@ -273,9 +273,9 @@ stages:
   # ToDo: 
   - deployment: VMDeploy
     displayName: Selenium Tests
-    environment:
-      name: project3
-      resourceType: VirtualMachine
+    #environment:
+      #name: project3
+      #resourceType: VirtualMachine
     strategy:
       runOnce:
         deploy:

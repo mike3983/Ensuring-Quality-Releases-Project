@@ -191,24 +191,18 @@ stages:
   #        - task: AzureWebApp@1
   #          displayName: Deploy Azure WebApp
   #          inputs:
-  #            azureSubscription: 'testenv'
+  #           azureSubscription: 'testenv'
               #ResourceGroupName: 'appsvc_windows_centralus'
   #           appName: 'myFakeWebApp2'
   #            appType: webApp
   #            package: $(Pipeline.Workspace)/drop-fakerestapi/fakerestapi-$(Build.BuildId).zip
   #            deploymentMethod: zipDeploy
-          #--------------------------------------------#    
-          # Run JMeter test suite against the App Service
-          # ToDo: Update the script below to install jmeter, unzip the jmeter test suite published zip artifact, and run the PerformanceTestSuite.  
-          # ToDo: Generate the log file. 
-          #- task: CmdLine@2
-          #  inputs:
-          #    script: |
-          #                                                                  # ToDo: Write your commands
-          #    workingDirectory: $(Pipeline.Workspace)/<artifact>            # ToDo: Use the artifact name from the task above
 
 
-- stage: Run_Tests
+#--------------------------------------------#  
+# TEST STAGE
+#--------------------------------------------# 
+- stage: Testing
   jobs:
   - job: PerformanceTest
     displayName: JMeter Testing

@@ -261,54 +261,42 @@ stages:
             targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
             artifactName: 'drop-endurance-test-logs'
             
-
-  #--------------------------------------------#  
-  # Selenium | Functional UI Tests
-  # ToDo: 
-  - deployment: VMDeploy
-    displayName: Selenium Tests
-    environment:
-      name: project3
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |           
-                # ToDo: Install Selenium, Chromium-browser & Chromedriver, if not already in the custom VM image. 
-                #! /bin/bash
-                sudo apt-get update -y
-                sudo apt-get upgrade -y
-                sudo apt-get install python3-pip -y
-                sudo apt-get install unzip -y
-                sudo apt-get install -y chromium-browser
-                sudo apt-get install -y chromium-chromedriver
-                pip3 install selenium
-                
-                #  ToDo: Add chromedriver executable to path
-                #  export PATH=$PATH:/usr/lib/chromium-browser/     
-                
-                # ToDo: Write commands for deploying the UI Test Suite (published zip artifact) to the linux VM and execute the Test Suite
-                # ToDo: Direct the output of the Selenium Test Suite to a log file
-                
-          - task: Bash@3
-            displayName: Run UI test
-            inputs:
-              targetType: 'inline'
-              script: |
-                unzip -o $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip -d ./
-                mkdir -p ./log/selenium
-                python3 ./login.py 2>&1 | tee -a ./log/selenium/selenium-test-suite.log
-                sudo cp ./log/selenium/selenium-test-suite.log logs/selenium/selenium-test-suite.log
-                ls -al
-          - task: PublishPipelineArtifact@1
-            displayName: Selenium Logs
-            inputs:
-              targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/selenium-test-suite.log'
-              artifact: drop-selenium-logs
-              publishLocation: 'pipeline'
+#--------------------------------------------#
+# Selenium | Functional UI Tests
+      - deployment: VMDeploy
+        displayName: Selenium Tests
+        environment:
+          name: 'project3'
+          resourceType: VirtualMachine
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - download: current
+                artifact: drop-uitests
+                patterns: '**/91-uitests.zip'
+              - task: Bash@3
+                inputs:
+                  workingDirectory: $(Pipeline.Workspace)
+                  targetType: 'inline'
+                  script: |
+                    #! /bin/bash
+                    sudo rm -rf /usr/local/bin/geckodriver
+                    sudo rm -rf drop-uitests/login.py
+                    sudo apt upgrade
+                    sudo apt install python3-pip
+                    sudo apt install firefox
+                    sudo pip3 install selenium
+                    sudo pip3 install --upgrade requests
+                    # Install Firefox Driver
+                    wget https://github.com/mozilla/geckodriver/releases/download/v0.32.0/geckodriver-v0.32.0-linux64.tar.gz
+                    tar -xvf geckodriver-v0.32.0-linux64.tar.gz
+                    sudo mv geckodriver /usr/local/bin/
+                    export PATH=$PATH:/usr/local/bin/geckodriver
+                    # Run UI Test
+                    cd drop-uitests
+                    pwd
+                    ls -la
+                    sudo unzip 91-uitests.zip
+                    python3 login.py
+                    # ToDo: Direct the output of the Selenium Test Suite to a log file

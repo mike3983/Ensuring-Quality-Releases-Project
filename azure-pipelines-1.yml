@@ -2,18 +2,89 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
+name: Azure Pipelines
 
 trigger:
-- master
+- main
 
-pool:
-  vmImage: ubuntu-latest
+variables:
+  python.version: '3.7.6'
+  azureServiceConnectionId: 'testenv'
+  projectRoot: $(System.DefaultWorkingDirectory)
+  environmentName: 'project3'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+#--------------------------------------------#  
+# POSTMAN
+#--------------------------------------------# 
+- stage: Postman
+  jobs:
+  - job: ArchivePostmanFiles
+    - task: ArchiveFiles@2
+       displayName: 'Archive Postman Tests'
+       inputs:
+         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+         includeRootFolder: false
+         archiveType: 'zip'
+         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
+     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
+       displayName: 'Upload Postman Tests'
+       artifact: postman  
+  - job: InstallPostman
+    steps:
+    - task: CmdLine@2
+      displayName: Install Newman
+      inputs:
+        script: 'sudo npm install -g newman'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    - task: CmdLine@2
+      displayName: Install Newman Reporter
+      inputs:
+        script: 'sudo npm install -g newman-reporter-junitfull' 
+        workingDirectory: $(System.DefaultWorkingDirectory)
+  - job: PostmanTests   
+    steps:
+    # Postman Data Validation Test Suite     
+    - task: CmdLine@2
+      displayName: Run Data Validation Tests
+      continueOnError: true
+      inputs:
+        script: newman run DV_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-data-validation.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'    
+    # Postman Regression Test Suite    
+    - task: CmdLine@2
+      displayName: Run Regression Tests
+      continueOnError: true
+      inputs:
+        script: newman run RT_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-regression-test.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+  - job: PublishResults
+    steps:
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/*.xml'
+        #searchFolder:    
+        mergeTestResults: true
+        testRunTitle: 'Publish postman test result'       
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+
+
+
+
+
+
+
+#- stage: JMeter
+#  jobs:
+#  - job: TestOnWindows
+#    steps:
+#    - script: echo Testing on Windows!
+#  - job: TestOnLinux
+#    steps:
+#    - script: echo Testing on Linux!
+#- stage: Selenium
+#  jobs:
+#  - job: Deploy
+#    steps:
+#    - script: echo Deploying the code!

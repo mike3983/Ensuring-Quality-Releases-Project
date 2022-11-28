@@ -21,7 +21,7 @@ stages:
   jobs:
   - job: ArchivePostmanFiles
     - task: ArchiveFiles@2
-      displayName: 'Archive Postman Tests'
+      displayName: Archive Postman Tests
       inputs:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
         includeRootFolder: false

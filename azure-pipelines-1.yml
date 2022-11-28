@@ -14,19 +14,19 @@ variables:
   environmentName: 'project3'
 
 stages:
-#--------------------------------------------#  
-# POSTMAN
-#--------------------------------------------# 
+###############################################  
+# POSTMAN                                     #
+############################################### 
 - stage: Postman
   jobs:
   - job: ArchivePostmanFiles
     - task: ArchiveFiles@2
-       displayName: 'Archive Postman Tests'
-       inputs:
-         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-         includeRootFolder: false
-         archiveType: 'zip'
-         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
+      displayName: 'Archive Postman Tests'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
      - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
        displayName: 'Upload Postman Tests'
        artifact: postman  

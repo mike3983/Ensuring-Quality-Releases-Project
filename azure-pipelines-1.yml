@@ -172,3 +172,47 @@ stages:
           python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
           sudo cat seleniumlog.log
           sudo cp seleniumlog.log /var/log/selenium
+
+###############################################  
+# TERRAFORM                                   #
+############################################### 
+#- stage: Terraform
+#  jobs:
+#  - job: BuildInfrastructure
+#    steps:
+#    - task: TerraformInstaller@0
+#      displayName: 'Terrafom installation'
+#      inputs:
+#        terraformVersion: '1.2.9'
+#    - task: TerraformTaskV3@3
+#      displayName: 'Terrafom init'
+#      inputs:
+#        provider: 'azurerm'
+#        command: 'init'
+#        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+#        backendServiceArm: '$(azureServiceConnectionId)'
+#        backendAzureRmResourceGroupName: 'AzureDevOps2'
+#        backendAzureRmStorageAccountName: 'tfstate250811811'
+#        backendAzureRmContainerName: 'tfstate'
+#        backendAzureRmKey: 'terraform.tfstate'  
+#    - task: TerraformTaskV3@3
+#      displayName: Terraform validate
+#      inputs:
+#        provider: 'azurerm'
+#        command: 'validate'    
+#    - task: TerraformTaskV3@3
+#      displayName: Terraform apply
+#      inputs:
+#        provider: 'azurerm'
+#        command: 'apply'
+#        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+#        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+
+    # Destroy the resources in Azure by running a separate pipeline. 
+    # - task: TerraformTaskV3@3
+    #   displayName: Terraform destroy
+    #   inputs:
+    #     provider: 'azurerm'
+    #     command: 'destroy'
+    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'

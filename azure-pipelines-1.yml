@@ -68,58 +68,100 @@ stages:
 ###############################################  
 # JMETER                                      #
 ############################################### 
-- stage: JMETER
-  jobs:
-  - job: JMETER
-    displayName: JMeter Testing
-    steps:
-    - bash: |
-        sudo apt-get update -y
-        sudo apt-get install default-jre-headless -y
-        java -version
-        if ! command -v apache-jmeter-5.5/bin/jmeter &> /dev/null
-        then
-          curl -O https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz
-          tar xzvf apache-jmeter-5.5.tgz
-        fi
-        mkdir -p testing/jmeter
-      displayName: JMeter Installation
-    - bash: |
-        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Starter.jmx \
-                                    -l testing/jmeter/starterresults.csv \
-                                    -e -f -o testing/jmeter \
-                                    -j testing/jmeter/stress-test.log
-      displayName: Stress Test
-    - task: ArchiveFiles@2
-      displayName: Publish Stress Test Results
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
-        verbose: true
-    - task: PublishPipelineArtifact@1
-      displayName: Publish Stress Test Logs
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
-        artifactName: 'drop-stress-test-logs'
-    - bash: |
-        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/endurancetest.jmx \
-                                    -l testing/jmeter/enduranceresults.csv \
-                                    -e -f -o testing/jmeter \
-                                    -j testing/jmeter/endurance-test.log
-      displayName: JMeter Endurance Test
-    - task: ArchiveFiles@2
-      displayName: Publish Endurance Test Results
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
-        verbose: true
+#- stage: JMeter
+#  jobs:
+#  - job: JMeter
+#   displayName: JMeter Testing
+#    steps:
+#    - bash: |
+#        sudo apt-get update -y
+#        sudo apt-get install default-jre-headless -y
+#        java -version
+#        if ! command -v apache-jmeter-5.5/bin/jmeter &> /dev/null
+#        then
+#          curl -O https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz
+#          tar xzvf apache-jmeter-5.5.tgz
+#        fi
+#        mkdir -p testing/jmeter
+#      displayName: JMeter Installation
+#    - bash: |
+#        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Starter.jmx \
+#                                    -l testing/jmeter/starterresults.csv \
+#                                    -e -f -o testing/jmeter \
+#                                    -j testing/jmeter/stress-test.log
+#      displayName: Stress Test
+#    - task: ArchiveFiles@2
+#      displayName: Publish Stress Test Results
+#      inputs:
+#        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
+#        includeRootFolder: false
+#        archiveType: 'zip'
+#        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
+#        verbose: true
+#    - task: PublishPipelineArtifact@1
+#      displayName: Publish Stress Test Logs
+#      inputs:
+#        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
+#        artifactName: 'drop-stress-test-logs'
+#    - bash: |
+#        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/endurancetest.jmx \
+#                                    -l testing/jmeter/enduranceresults.csv \
+#                                    -e -f -o testing/jmeter \
+#                                    -j testing/jmeter/endurance-test.log
+#      displayName: JMeter Endurance Test
+#    - task: ArchiveFiles@2
+#      displayName: Publish Endurance Test Results
+#      inputs:
+#        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
+#        includeRootFolder: false
+#        archiveType: 'zip'
+#        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
+#        verbose: true
+#    - task: PublishPipelineArtifact@1
+#      displayName: Publish Endurance Test Logs
+#      inputs:
+#        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
+#        artifactName: 'drop-endurance-test-logs'
 
-    - task: PublishPipelineArtifact@1
-      displayName: Publish Endurance Test Logs
+###############################################  
+# SELENIUM                                   #
+############################################### 
+- stage: Selenium
+  jobs:
+  - job: Selenium
+    steps:
+    - task: ArchiveFiles@2
+      displayName: Archive Selenium Tests
       inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
-        artifactName: 'drop-endurance-test-logs'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
+      displayName: Upload Selenium Tests
+      artifact: selenium
+    - task: Bash@3
+      displayName: Install Selenium
+      inputs:
+        targetType: 'inline'
+        script: |
+          #! /bin/bash
+                
+          sudo apt-get upgrade -y
+          sudo apt-get install python3-pip -y
+          sudo apt-get install unzip -y
+          sudo apt-get install -y chromium-browser
+          sudo apt-get install -y chromium-chromedriver
+          pip3 install selenium
+          export PATH=$PATH:/usr/lib/chromium-browser/
+          cd $(Pipeline.Workspace)/selenium
+          unzip -o $(Pipeline.Workspace)/selenium/$(Build.BuildId)-selenium-tests -d .
+    - task: Bash@3
+      displayName: 'Run Selenium Tests'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # python3 /home/devopsagent/myagent/_work/1/selenium/login.py > /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log
+          python3 /home/devopsagent/myagent/_work/1/selenium/login.py | tee -a /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log
+          cat /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log
+          sudo cp /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log /var/log 

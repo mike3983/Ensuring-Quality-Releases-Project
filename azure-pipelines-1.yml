@@ -130,6 +130,7 @@ stages:
   jobs:
   - job: Selenium
     steps:
+    pool: myAgentPool
     - task: ArchiveFiles@2
       displayName: Archive Selenium Tests
       inputs:

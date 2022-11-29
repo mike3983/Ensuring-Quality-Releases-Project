@@ -31,8 +31,6 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
       displayName: 'Upload Postman Tests'
       artifact: postman  
-  - job: InstallPostman
-    steps:
     - task: CmdLine@2
       displayName: Install Newman
       inputs:
@@ -43,8 +41,6 @@ stages:
       inputs:
         script: 'sudo npm install -g newman-reporter-junitfull' 
         workingDirectory: $(System.DefaultWorkingDirectory)
-  - job: PostmanTests   
-    steps:
     # Postman Data Validation Test Suite     
     - task: CmdLine@2
       displayName: Run Data Validation Tests

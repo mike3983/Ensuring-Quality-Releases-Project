@@ -71,58 +71,36 @@ stages:
 - stage: JMETER
   jobs:
   - job: JMETER
-  steps:         
-  - task: ArchiveFiles@2
-    displayName: Archive Jmeter Tests
-    inputs:
-      rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
-      includeRootFolder: false
-      archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip'
-  - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip
-    displayName: Upload JMeter Tests
-    artifact: jmeter
-  - task: Bash@3
-    displayName: Install JMeter
-    inputs:
-      targetType: 'inline'
-      script: |
-        sudo apt-get install openjdk-11-jre-headless -y
-        wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.1.tgz -O jmeter.tgz
-        tar -xzvf jmeter.tgz
-  - task: Bash@3
-    displayName: Run JMeter tests
-    inputs:
-      targetType: 'inline'
-      script: |
-        apache-jmeter-5.4.1/bin/jmeter -n -t automatedtesting/jmeter/Starter.jmx \
-          -l automatedtesting/jmeter/starterresults.csv \
-          -e -f -o automatedtesting/jmeter/stress-test-report.html \
-          -j automatedtesting/jmeter/stress-test.log
-          
-        apache-jmeter-5.4.1/bin/jmeter -n -t automatedtesting/jmeter/endurancetest.jmx \
-          -l automatedtesting/jmeter/enduranceresults.csv \
-          -e -f -o automatedtesting/jmeter/endurance-test-report.html \
-          -j automatedtesting/jmeter/endurance-test.log
-      
-
-
-
-
-
-
-
-
-#- stage: JMeter
-#  jobs:
-#  - job: TestOnWindows
-#    steps:
-#    - script: echo Testing on Windows!
-#  - job: TestOnLinux
-#    steps:
-#    - script: echo Testing on Linux!
-#- stage: Selenium
-#  jobs:
-#  - job: Deploy
-#    steps:
-#    - script: echo Deploying the code!
+    steps:         
+    - task: ArchiveFiles@2
+      displayName: Archive Jmeter Tests
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip
+      displayName: Upload JMeter Tests
+      artifact: jmeter
+    - task: Bash@3
+      displayName: Install JMeter
+      inputs:
+        targetType: 'inline'
+        script: |
+          sudo apt-get install openjdk-11-jre-headless -y
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.1.tgz -O jmeter.tgz
+          tar -xzvf jmeter.tgz
+    - task: Bash@3
+      displayName: Run JMeter tests
+      inputs:
+        targetType: 'inline'
+        script: |
+          apache-jmeter-5.4.1/bin/jmeter -n -t automatedtesting/jmeter/Starter.jmx \
+            -l automatedtesting/jmeter/starterresults.csv \
+            -e -f -o automatedtesting/jmeter/stress-test-report.html \
+            -j automatedtesting/jmeter/stress-test.log
+            
+          apache-jmeter-5.4.1/bin/jmeter -n -t automatedtesting/jmeter/endurancetest.jmx \
+            -l automatedtesting/jmeter/enduranceresults.csv \
+            -e -f -o automatedtesting/jmeter/endurance-test-report.html \
+            -j automatedtesting/jmeter/endurance-test.log

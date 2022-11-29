@@ -129,8 +129,8 @@ stages:
 - stage: Selenium
   jobs:
   - job: Selenium
+    pool: myAgentPool  
     steps:
-    pool: myAgentPool
     - task: ArchiveFiles@2
       displayName: Archive Selenium Tests
       inputs:

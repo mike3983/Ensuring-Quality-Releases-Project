@@ -59,15 +59,16 @@ stages:
       inputs:
         script: newman run RT_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-regression-test.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-  - job: PublishResults
-    steps:
+    #Publish results    
     - task: PublishTestResults@2
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/*.xml'
+        testResultsFiles: '**/TEST-*.xml'
         #searchFolder:    
         mergeTestResults: true
-        testRunTitle: 'Publish postman test result'       
+        testRunTitle: 'Publish postman test result'         
+
+      
 
 
 

@@ -172,4 +172,3 @@ stages:
           python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
           sudo cat seleniumlog.log
           sudo cp seleniumlog.log /var/log/selenium
-      displayName: Run Selenium Tests

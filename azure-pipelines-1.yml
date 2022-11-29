@@ -141,7 +141,7 @@ stages:
       displayName: Upload Selenium Tests
       artifact: selenium
     - download: current
-      displyName: Download Selenium
+      displayName: Download Selenium
       artifact: selenium  
     - task: Bash@3
       displayName: Install Selenium

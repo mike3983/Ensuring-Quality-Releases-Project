@@ -17,60 +17,60 @@ stages:
 ###############################################  
 # POSTMAN                                     #
 ############################################### 
-- stage: Postman
-  jobs:
-  - job: Postman
-    steps:
-    - task: ArchiveFiles@2
-      displayName: Archive Postman Tests
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
-      displayName: 'Upload Postman Tests'
-      artifact: postman  
-    - task: CmdLine@2
-      displayName: Install Newman
-      inputs:
-        script: 'sudo npm install -g newman'
-        workingDirectory: $(System.DefaultWorkingDirectory)
-    - task: CmdLine@2
-      displayName: Install Newman Reporter
-      inputs:
-        script: 'sudo npm install -g newman-reporter-junitfull' 
-        workingDirectory: $(System.DefaultWorkingDirectory)
+#- stage: Postman
+#  jobs:
+#  - job: Postman
+#    steps:
+#    - task: ArchiveFiles@2
+#      displayName: Archive Postman Tests
+#      inputs:
+#        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+#        includeRootFolder: false
+#        archiveType: 'zip'
+#        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
+#    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
+#      displayName: 'Upload Postman Tests'
+#      artifact: postman  
+#    - task: CmdLine@2
+#      displayName: Install Newman
+#      inputs:
+#        script: 'sudo npm install -g newman'
+#        workingDirectory: $(System.DefaultWorkingDirectory)
+#    - task: CmdLine@2
+#      displayName: Install Newman Reporter
+#      inputs:
+#        script: 'sudo npm install -g newman-reporter-junitfull' 
+#        workingDirectory: $(System.DefaultWorkingDirectory)
     # Postman Data Validation Test Suite     
-    - task: CmdLine@2
-      displayName: Run Data Validation Tests
-      continueOnError: true
-      inputs:
-        script: newman run DV_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-data-validation.xml
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'    
+#    - task: CmdLine@2
+#      displayName: Run Data Validation Tests
+#      continueOnError: true
+#      inputs:
+#        script: newman run DV_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-data-validation.xml
+#        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'    
     # Postman Regression Test Suite    
-    - task: CmdLine@2
-      displayName: Run Regression Tests
-      continueOnError: true
-      inputs:
-        script: newman run RT_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-regression-test.xml
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+#    - task: CmdLine@2
+#      displayName: Run Regression Tests
+#      continueOnError: true
+#      inputs:
+#        script: newman run RT_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-regression-test.xml
+#        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     #Publish results    
-    - task: PublishTestResults@2
-      displayName: Publish Test Results
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/TEST-*.xml'
+#    - task: PublishTestResults@2
+#      displayName: Publish Test Results
+#      inputs:
+#        testResultsFormat: 'JUnit'
+#        testResultsFiles: '**/TEST-*.xml'
         #searchFolder:    
-        mergeTestResults: true
-        testRunTitle: 'Publish postman test result'
+#        mergeTestResults: true
+#        testRunTitle: 'Publish postman test result'
 
 ###############################################  
 # JMETER                                      #
 ############################################### 
-- stage: Testing
+- stage: JMETER
   jobs:
-  - job: PerformanceTest
+  - job: JMETER
     displayName: JMeter Testing
     steps:
         - bash: |
@@ -90,22 +90,19 @@ stages:
                                         -e -f -o testing/jmeter \
                                         -j testing/jmeter/stress-test.log
           displayName: Stress Test
-        
         - task: ArchiveFiles@2
-          displayName: Publishing Stress Test
+          displayName: Publish Stress Test Results
           inputs:
             rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
             includeRootFolder: false
             archiveType: 'zip'
             archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
             verbose: true
-            
         - task: PublishPipelineArtifact@1
-          displayName: Publishing Stress Test Logs
+          displayName: Publish Stress Test Logs
           inputs:
             targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
             artifactName: 'drop-stress-test-logs'
-
         - bash: |
             apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/endurancetest.jmx \
                                         -l testing/jmeter/enduranceresults.csv \
@@ -113,7 +110,7 @@ stages:
                                         -j testing/jmeter/endurance-test.log
           displayName: JMeter Endurance Test
         - task: ArchiveFiles@2
-          displayName: Publishing Endurance Test
+          displayName: Publish Endurance Test Results
           inputs:
             rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
             includeRootFolder: false
@@ -122,7 +119,7 @@ stages:
             verbose: true
 
         - task: PublishPipelineArtifact@1
-          displayName: Publishing Endurance Test Logs
+          displayName: Publish Endurance Test Logs
           inputs:
             targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
             artifactName: 'drop-endurance-test-logs'

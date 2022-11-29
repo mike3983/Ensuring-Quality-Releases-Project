@@ -140,6 +140,9 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
       displayName: Upload Selenium Tests
       artifact: selenium
+    - download: current
+      displyName: Download Selenium
+      artifact: selenium  
     - task: Bash@3
       displayName: Install Selenium
       inputs:
@@ -157,11 +160,11 @@ stages:
           cd $(Pipeline.Workspace)/selenium
           unzip -o $(Pipeline.Workspace)/selenium/$(Build.BuildId)-selenium-tests -d .
     - task: Bash@3
-      displayName: 'Run Selenium Tests'
+      displayName: Run Selenium Tests
       inputs:
         targetType: 'inline'
         script: |
           # python3 /home/devopsagent/myagent/_work/1/selenium/login.py > /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log
           python3 /home/devopsagent/myagent/_work/1/selenium/login.py | tee -a /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log
           cat /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log
-          sudo cp /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log /var/log 
+          sudo cp /home/devopsagent/myagent/_work/1/selenium/seleniumtestrun.log /var/log  

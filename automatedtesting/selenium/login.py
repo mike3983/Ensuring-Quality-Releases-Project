@@ -18,22 +18,22 @@ driver.get('https://www.saucedemo.com/')
 
 # Start the browser and login with standard_user
 def login (user, password):
-    print ('INFO: Starting the browser...')
+    # print ('INFO: Starting the browser...')
     logging.info('Starting the browser...')
     driver.find_element("css selector", "input[id='user-name']").send_keys(user)
     driver.find_element("css selector", "input[id='password']").send_keys(password)
     driver.find_element("css selector", "input[id='login-button']").click()
-    print('INFO: Successfully logged in as ' + user )
+    # print('INFO: Successfully logged in as ' + user )
     logging.info('Successfully logged in as ' + user)
 
 def add_to_cart():
-    print('INFO: Adding all 6 items to cart')
+    # print('INFO: Adding all 6 items to cart')
     logging.info('Adding all 6 items to cart')
     items = driver.find_elements("css selector", "button.btn_primary.btn_inventory")
 
     for item in items:
         product = item.get_property("name")
-        print('INFO: ' + product + ' added to the cart')
+        # print('INFO: ' + product + ' added to the cart')
         logging.info(product + ' added to the cart')
         item.click()
     cart_label = driver.find_element("css selector", '.shopping_cart_badge').text
@@ -42,13 +42,13 @@ def add_to_cart():
 
 def remove_from_cart():
     driver.find_element("css selector", "a[class='shopping_cart_link']").click()
-    print('INFO: Removing all 6 items to cart')
+    # print('INFO: Removing all 6 items to cart')
     logging.info('Removing all 6 items to cart')
     items = driver.find_elements("css selector", "button.cart_button")
 
     for item in items:
         product = item.get_property("name")
-        print('INFO: '+ product +' removed from the cart')
+        # print('INFO: '+ product +' removed from the cart')
         logging.info(product +' removed from the cart')
         item.click()
     

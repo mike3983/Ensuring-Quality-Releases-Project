@@ -129,7 +129,6 @@ stages:
 - stage: Selenium
   jobs:
   - job: Selenium
-    pool: myAgentPool  
     steps:
     - task: ArchiveFiles@2
       displayName: Archive Selenium Tests
@@ -168,12 +167,12 @@ stages:
           cd $(Pipeline.Workspace)/s/automatedtesting/selenium
           # rm -rf seleniumtestrun.log
           pwd
-          python3 login.py
+          python3 login.py | tee -a output.log.txt
           ls -lah
-          python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
-          sudo cat seleniumlog.log
-          sudo cp seleniumlog.log /var/log/selenium
 
+#python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
+#sudo cat seleniumlog.log
+#sudo cp seleniumlog.log /var/log/selenium
 ###############################################  
 # TERRAFORM                                   #
 ############################################### 

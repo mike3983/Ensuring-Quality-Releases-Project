@@ -12,7 +12,7 @@ logging.basicConfig(
 options = ChromeOptions()
 options.add_argument("--headless") 
 driver = webdriver.Chrome(options=options)
-print ('INFO: Browser started successfully. Navigating to the demo page to login.')
+# print ('INFO: Browser started successfully. Navigating to the demo page to login.')
 logging.info('Browser started successfully. Navigating to the demo page to login.')
 driver.get('https://www.saucedemo.com/')
 

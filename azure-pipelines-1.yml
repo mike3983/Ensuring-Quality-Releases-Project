@@ -171,6 +171,7 @@ stages:
           python3 login.py | tee -a output.log
           ls -lah
           cat output.log
+          sudo cp /home/mikeg/myagent/_work/1/s/automatedtesting/selenium/output.log /var/log
 
 #python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
 #sudo cat seleniumlog.log

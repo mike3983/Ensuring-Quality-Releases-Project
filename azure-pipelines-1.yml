@@ -170,6 +170,7 @@ stages:
           pwd
           python3 login.py | tee -a output.log.txt
           ls -lah
+          cat output.log.txt
 
 #python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
 #sudo cat seleniumlog.log

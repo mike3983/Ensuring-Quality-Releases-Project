@@ -71,7 +71,7 @@ stages:
 - stage: JMeter
   jobs:
   - job: JMeter
-   displayName: JMeter Testing
+    displayName: JMeter Testing
     steps:
     - bash: |
         sudo apt-get update -y

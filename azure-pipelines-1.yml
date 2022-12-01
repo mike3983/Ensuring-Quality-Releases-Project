@@ -17,111 +17,111 @@ stages:
 ###############################################  
 # POSTMAN                                     #
 ############################################### 
-#- stage: Postman
-#  jobs:
-#  - job: Postman
-#    steps:
-#    - task: ArchiveFiles@2
-#      displayName: Archive Postman Tests
-#      inputs:
-#        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-#        includeRootFolder: false
-#        archiveType: 'zip'
-#        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
-#    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
-#      displayName: 'Upload Postman Tests'
-#      artifact: postman  
-#    - task: CmdLine@2
-#      displayName: Install Newman
-#      inputs:
-#        script: 'sudo npm install -g newman'
-#        workingDirectory: $(System.DefaultWorkingDirectory)
-#    - task: CmdLine@2
-#      displayName: Install Newman Reporter
-#      inputs:
-#        script: 'sudo npm install -g newman-reporter-junitfull' 
-#        workingDirectory: $(System.DefaultWorkingDirectory)
+- stage: Postman
+  jobs:
+  - job: Postman
+    steps:
+    - task: ArchiveFiles@2
+      displayName: Archive Postman Tests
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
+      displayName: 'Upload Postman Tests'
+      artifact: postman  
+    - task: CmdLine@2
+      displayName: Install Newman
+      inputs:
+        script: 'sudo npm install -g newman'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+    - task: CmdLine@2
+      displayName: Install Newman Reporter
+      inputs:
+        script: 'sudo npm install -g newman-reporter-junitfull' 
+        workingDirectory: $(System.DefaultWorkingDirectory)
     # Postman Data Validation Test Suite     
-#    - task: CmdLine@2
-#      displayName: Run Data Validation Tests
-#      continueOnError: true
-#      inputs:
-#        script: newman run DV_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-data-validation.xml
-#        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'    
+    - task: CmdLine@2
+      displayName: Run Data Validation Tests
+      continueOnError: true
+      inputs:
+        script: newman run DV_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-data-validation.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'    
     # Postman Regression Test Suite    
-#    - task: CmdLine@2
-#      displayName: Run Regression Tests
-#      continueOnError: true
-#      inputs:
-#        script: newman run RT_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-regression-test.xml
-#        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    - task: CmdLine@2
+      displayName: Run Regression Tests
+      continueOnError: true
+      inputs:
+        script: newman run RT_suite.json -e postman_env.json -r cli,junitfull --reporter-junitfull-export TEST-JUnitReport-regression-test.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
     #Publish results    
-#    - task: PublishTestResults@2
-#      displayName: Publish Test Results
-#      inputs:
-#        testResultsFormat: 'JUnit'
-#        testResultsFiles: '**/TEST-*.xml'
+    - task: PublishTestResults@2
+      displayName: Publish Test Results
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/TEST-*.xml'
         #searchFolder:    
-#        mergeTestResults: true
-#        testRunTitle: 'Publish postman test result'
+        mergeTestResults: true
+        testRunTitle: 'Publish postman test result'
 
 ###############################################  
 # JMETER                                      #
 ############################################### 
-#- stage: JMeter
-#  jobs:
-#  - job: JMeter
-#   displayName: JMeter Testing
-#    steps:
-#    - bash: |
-#        sudo apt-get update -y
-#        sudo apt-get install default-jre-headless -y
-#        java -version
-#        if ! command -v apache-jmeter-5.5/bin/jmeter &> /dev/null
-#        then
-#          curl -O https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz
-#          tar xzvf apache-jmeter-5.5.tgz
-#        fi
-#        mkdir -p testing/jmeter
-#      displayName: JMeter Installation
-#    - bash: |
-#        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Starter.jmx \
-#                                    -l testing/jmeter/starterresults.csv \
-#                                    -e -f -o testing/jmeter \
-#                                    -j testing/jmeter/stress-test.log
-#      displayName: Stress Test
-#    - task: ArchiveFiles@2
-#      displayName: Publish Stress Test Results
-#      inputs:
-#        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
-#        includeRootFolder: false
-#        archiveType: 'zip'
-#        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
-#        verbose: true
-#    - task: PublishPipelineArtifact@1
-#      displayName: Publish Stress Test Logs
-#      inputs:
-#        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
-#        artifactName: 'drop-stress-test-logs'
-#    - bash: |
-#        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/endurancetest.jmx \
-#                                    -l testing/jmeter/enduranceresults.csv \
-#                                    -e -f -o testing/jmeter \
-#                                    -j testing/jmeter/endurance-test.log
-#      displayName: JMeter Endurance Test
-#    - task: ArchiveFiles@2
-#      displayName: Publish Endurance Test Results
-#      inputs:
-#        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
-#        includeRootFolder: false
-#        archiveType: 'zip'
-#        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
-#        verbose: true
-#    - task: PublishPipelineArtifact@1
-#      displayName: Publish Endurance Test Logs
-#      inputs:
-#        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
-#        artifactName: 'drop-endurance-test-logs'
+- stage: JMeter
+  jobs:
+  - job: JMeter
+   displayName: JMeter Testing
+    steps:
+    - bash: |
+        sudo apt-get update -y
+        sudo apt-get install default-jre-headless -y
+        java -version
+        if ! command -v apache-jmeter-5.5/bin/jmeter &> /dev/null
+        then
+          curl -O https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.5.tgz
+          tar xzvf apache-jmeter-5.5.tgz
+        fi
+        mkdir -p testing/jmeter
+      displayName: JMeter Installation
+    - bash: |
+        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/Starter.jmx \
+                                    -l testing/jmeter/starterresults.csv \
+                                    -e -f -o testing/jmeter \
+                                    -j testing/jmeter/stress-test.log
+      displayName: Stress Test
+    - task: ArchiveFiles@2
+      displayName: Publish Stress Test Results
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
+        verbose: true
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Stress Test Logs
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-stress-test.zip'
+        artifactName: 'drop-stress-test-logs'
+    - bash: |
+        apache-jmeter-5.5/bin/jmeter -n -t automatedtesting/jmeter/endurancetest.jmx \
+                                    -l testing/jmeter/enduranceresults.csv \
+                                    -e -f -o testing/jmeter \
+                                    -j testing/jmeter/endurance-test.log
+      displayName: JMeter Endurance Test
+    - task: ArchiveFiles@2
+      displayName: Publish Endurance Test Results
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/testing/jmeter'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
+        verbose: true
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Endurance Test Logs
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-endurance-test.zip'
+        artifactName: 'drop-endurance-test-logs'
 
 ###############################################  
 # SELENIUM                                   #
@@ -166,50 +166,46 @@ stages:
         targetType: 'inline'
         script: |
           cd $(Pipeline.Workspace)/s/automatedtesting/selenium
-          # rm -rf seleniumtestrun.log
           pwd
           python3 login.py | tee -a output.log
           ls -lah
           cat output.log
           sudo cp /home/mikeg/myagent/_work/1/s/automatedtesting/selenium/output.log /var/log
 
-#python3 publishlog.py selenium-result.log $(LOG-WORKSPACE) $(LOG-KEY) > publish.log 
-#sudo cat seleniumlog.log
-#sudo cp seleniumlog.log /var/log/selenium
 ###############################################  
 # TERRAFORM                                   #
 ############################################### 
-#- stage: Terraform
-#  jobs:
-#  - job: BuildInfrastructure
-#    steps:
-#    - task: TerraformInstaller@0
-#      displayName: 'Terrafom installation'
-#      inputs:
-#        terraformVersion: '1.2.9'
-#    - task: TerraformTaskV3@3
-#      displayName: 'Terrafom init'
-#      inputs:
-#        provider: 'azurerm'
-#        command: 'init'
-#        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-#        backendServiceArm: '$(azureServiceConnectionId)'
-#        backendAzureRmResourceGroupName: 'AzureDevOps2'
-#        backendAzureRmStorageAccountName: 'tfstate250811811'
-#        backendAzureRmContainerName: 'tfstate'
-#        backendAzureRmKey: 'terraform.tfstate'  
-#    - task: TerraformTaskV3@3
-#      displayName: Terraform validate
-#      inputs:
-#        provider: 'azurerm'
-#        command: 'validate'    
-#    - task: TerraformTaskV3@3
-#      displayName: Terraform apply
-#      inputs:
-#        provider: 'azurerm'
-#        command: 'apply'
-#        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-#        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
+- stage: Terraform
+  jobs:
+  - job: BuildInfrastructure
+    steps:
+    - task: TerraformInstaller@0
+      displayName: 'Terrafom installation'
+      inputs:
+        terraformVersion: '1.2.9'
+    - task: TerraformTaskV3@3
+      displayName: 'Terrafom init'
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        backendServiceArm: '$(azureServiceConnectionId)'
+        backendAzureRmResourceGroupName: 'AzureDevOps2'
+        backendAzureRmStorageAccountName: 'tfstate250811811'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'terraform.tfstate'  
+    - task: TerraformTaskV3@3
+      displayName: Terraform validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'    
+    - task: TerraformTaskV3@3
+      displayName: Terraform apply
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
     # Destroy the resources in Azure by running a separate pipeline. 
     # - task: TerraformTaskV3@3
